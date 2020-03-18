@@ -13,3 +13,8 @@ export const clientConfig = {
     url: 'https://localhost:8443/api',
     key: 'API_KEY here'
 }
+
+export const tlsConfig = {
+    http_port: '8080',
+    https_port: '8443'
+}
