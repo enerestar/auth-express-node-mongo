@@ -27,6 +27,7 @@ const createUser = async (user) => {
         const collection = await mongoClient.connectToDB();
         collection.createIndex({email:1}, {unique: true});
         collection.insertOne(user);
+        console.log('saved to database');
     }
     catch(err) {
         res.send(500);

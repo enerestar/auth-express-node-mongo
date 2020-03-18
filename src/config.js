@@ -15,6 +15,6 @@ export const clientConfig = {
 }
 
 export const tlsConfig = {
-    http_port: '8080',
-    https_port: '8443'
+    http_port: '9090',
+    https_port: '9554'
 }
