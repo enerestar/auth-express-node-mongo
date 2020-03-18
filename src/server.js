@@ -2,7 +2,6 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const http = require('http');
 const https = require('https');
-const fs = require('fs');
 const postmark = require('./postmark');
 
 const bcrypt = require('bcrypt');

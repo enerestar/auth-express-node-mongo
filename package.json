@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "node server.js -S -C ./src/sslcert/server.cert -K ./src/sslcert/server.key",
+    "dev": "node src/server.js -S -C ./src/sslcert/server.cert -K ./src/sslcert/server.key",
+    "dev-watch": "nodemon src/server.js -S -C ./src/sslcert/server.cert -K ./src/sslcert/server.key",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",

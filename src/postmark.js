@@ -1,5 +1,5 @@
 const postmark = require('postmark');
-const crypto = require('./src/crypto');
+const crypto = require('./crypto');
 
 /**
  * 
