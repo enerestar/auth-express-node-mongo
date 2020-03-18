@@ -1,0 +1,3 @@
+{
+    "url":"mongodb+srv://user:userpassword@dbname-dvoxs.mongodb.net/test?retryWrites=true&w=majority"
+}
