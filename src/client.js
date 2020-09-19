@@ -1,7 +1,7 @@
 const axios = require('axios');
 const config = require('./config');
 
-process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = 0
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = 0
 
 const apiCall = async () => {
     const requestOptions = {
@@ -19,4 +19,4 @@ const apiCall = async () => {
     }
 }
 
-apiCall(accessToken);
+apiCall();

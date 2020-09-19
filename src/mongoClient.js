@@ -13,19 +13,7 @@ const getMongoClient = async () => {
             useUnifiedTopology: true,
         }).connect();
     }
-    return mongoClient;
-}
-
-/**
- * @returns void
- */
-const init = async () => {
-    try {
-        await getMongoClient();
-    } catch(err) {
-        res.send(500);
-        res.send("DB connection error!")
-    }
+    return await mongoClient;
 }
 
 /**
@@ -33,17 +21,16 @@ const init = async () => {
  */
 const connectToDB = async () => {
     try {
-        const client = await mongoClient.getMongoClient();
+        const client = await getMongoClient();
         db = client.db('mhcasia');
         const register = db.collection('register');
         return register;
     } catch (err) {
-        res.status(500);
-        res.send("Oops, seems like something happened on our end!");
+        throw err;
     }
 }
 
 module.exports = { 
     getMongoClient,
-    init,
-    connectToDB }
+    connectToDB,
+}

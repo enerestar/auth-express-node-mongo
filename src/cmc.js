@@ -2,9 +2,8 @@ const axios = require('axios');
 const config = require('./config');
 
 const coinMarketCapApi = async () => {
+  const url = config.cmcConfig.url;
   const requestOptions = {
-    method: 'GET',
-    url: config.cmcConfig.url,
     qs: {
       'start': '1',
       'limit': '5000',
@@ -18,7 +17,7 @@ const coinMarketCapApi = async () => {
   };
   
   try {
-    const axiosResponse = await axios.get(requestOptions.url, requestOptions);
+    const axiosResponse = await axios.get(url, requestOptions);
     return axiosResponse.data;
   } catch (err) {
     console.log('API call error:', err.message);

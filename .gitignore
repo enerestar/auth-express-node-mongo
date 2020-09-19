@@ -128,4 +128,5 @@ src/keys/cmc_key.json
 src/keys/mongo_atlas_key.json
 src/sslcert/server.key
 src/sslcert/server.crt
+src/config.js
 # End of https://www.gitignore.io/api/node

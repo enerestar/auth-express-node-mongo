@@ -12,6 +12,7 @@ const cookieParser = require('cookie-parser');
 const credentials = require('./sslcert/credentials');
 const config = require('./config');
 const dbQuery = require('./dbQuery');
+const mongoClient = require('./mongoClient');
 const coinMarketCapAPI = require('./cmc');
 
 const app = express();
@@ -48,7 +49,6 @@ app.get('/', (req, res) => {
 })
 
 app.post('/register', async(req,res) => {
-
     let password_hash
     // generate email token
     email_verification_token = crypto.generateRandomString();
@@ -66,7 +66,8 @@ app.post('/register', async(req,res) => {
     // store relevant data into mongodb
     try {
         let user = req.body;
-        await dbQuery.createUser(user);
+        const dbCollection = await mongoClient.connectToDB();
+        await dbQuery.createUser(dbCollection, user);
         postmark.sendEmail(email_verification_token, req.body.email);
         res.send("We have sent an email with a confirmation link to your email address");    
     } catch(err) {
@@ -86,18 +87,20 @@ app.get('/verify', async(req,res) => {
     // connect to db
     try {
         const userEmailVerificationToken = { "email_verification_token" : decodedToken };
-        const user = await dbQuery.getUser(userEmailVerificationToken);
+        const dbCollection = await mongoClient.connectToDB();
+        const user = await dbQuery.getUser(dbCollection, userEmailVerificationToken);
+        const accessToken = crypto.generateAccessToken();
         if (user != null) {
             const userEmail = { "email": decodeEmail };
             const value = { register_status: true, accessToken: accessToken };
-            await dbQuery.updateUser(userEmail, value);
+            await dbQuery.updateUser(dbCollection, userEmail, value);
         }
     } catch(err) {
         console.log(err);
         res.send("Invalid email link!")
         return;
     }
-    res.sendFile(__dirname +'/src/html/verify.html');
+    res.sendFile(__dirname +'/html/verify.html');
 })
 app.get('/login', async (req, res) => {
     const sessionID = req.sessionID;
@@ -105,13 +108,14 @@ app.get('/login', async (req, res) => {
     // if user is login and has session, then give api token
     if (sessionData != undefined) {
         const userEmail = { "email": sessionData.email }
-        const user = await dbQuery.getUser(userEmail);
+        const dbCollection = await mongoClient.connectToDB();
+        const user = await dbQuery.getUser(dbCollection, userEmail);
         const accessToken = user.accessToken;
         res.send
-        res.send(`Your API_KEY is: ${accessToken} <p></p> https://localhost:8443/api with access token`)
+        res.send(`Your API_KEY is: ${accessToken} <p></p> https://localhost:9554/api with access token`)
     } else {
       console.log(sessionData)
-      res.sendFile(__dirname + "/src/html/login.html");
+      res.sendFile(__dirname + "/html/login.html");
     }
 })
 
@@ -124,7 +128,8 @@ app.post('/login/submit', async(req, res) => {
     const password = req.body.password;
     try {
         const userEmail = { "email": email };
-        const user = await dbQuery.getUser(userEmail);
+        const dbCollection = await mongoClient.connectToDB();
+        const user = await dbQuery.getUser(dbCollection, userEmail);
         const register_status = user.register_status;
         if (register_status === false) {
             res.status(401);
@@ -135,7 +140,7 @@ app.post('/login/submit', async(req, res) => {
           const match = await bcrypt.compare(password, password_hash);      
         if (match) {
             sessionStorage[sessionID] = { email }
-            res.send(`Your API_KEY is: ${accessToken} <p></p> https://localhost:8443/api with access token`);
+            res.send(`Your API_KEY is: ${accessToken} <p></p> https://localhost:9554/api with access token`);
           } else {
             delete sessionStorage[sessionID];
             res.send('Password is incorrect');
@@ -149,7 +154,8 @@ app.post('/login/submit', async(req, res) => {
 app.get('/api', async(req, res) => {
     try {
         const apiKey = {"accessToken": req.headers.api_key};
-        const user = await dbQuery.getUser(apiKey);
+        const dbCollection = await mongoClient.connectToDB();
+        const user = await dbQuery.getUser(dbCollection, apiKey);
         if (user != null) {
             let data = await coinMarketCapAPI();
             res.send(data);

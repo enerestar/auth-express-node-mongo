@@ -11,7 +11,7 @@ const cmcConfig = {
 
 const clientConfig = {
     url: 'https://localhost:9554/api',
-    key: '3rF+v+sKW09h/wf80yUXVickqoUqorhXva+lAWWh3b8='
+    key: ''
 }
 
 const tlsConfig = {

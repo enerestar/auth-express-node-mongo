@@ -18,7 +18,7 @@ let buildPostmarkBody = (encodedToken, encodedEmail, email) => {
     body['To'] = email;
     body['Subject'] = "Welcome!";
     body['Tag'] = "Email verification";
-    body['HtmlBody'] = "<b>Hi there! Verify your email address</b> <a href='https://localhost:8443/verify?user=" + encodedEmail + "&token=" + encodedToken + "'>here</a>",
+    body['HtmlBody'] = "<b>Hi there! Verify your email address</b> <a href='https://localhost:9554/verify?user=" + encodedEmail + "&token=" + encodedToken + "'>here</a>",
     body['TextBody'] = "Hello";
     body['ReplyTo'] = "serene@enerestar.com";
     body['TrackOpens'] = true;

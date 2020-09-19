@@ -5,15 +5,12 @@ const mongoClient = require('./mongoClient');
  * 
  * @param {object} option that contains schema for user retrieval
  */
-const getUser = async (option) => {
+const getUser = async (dbCollection, option) => {
     try {
-        mongoClient.init();
-        const collection = await mongoClient.connectToDB();
-        const user = collection.findOne(option)
+        const user = dbCollection.findOne(option);
         return user
     } catch(err) {
-        res.send(500);
-        res.send("Error in querying user!");
+        throw err;
     }
 }
 
@@ -21,17 +18,14 @@ const getUser = async (option) => {
  * 
  * @param {object} user that came from request body of a registration form
  */
-const createUser = async (user) => {
-    mongoClient.init();
+const createUser = async (dbCollection, user) => {
     try {
-        const collection = await mongoClient.connectToDB();
-        collection.createIndex({email:1}, {unique: true});
-        collection.insertOne(user);
+        await dbCollection.createIndex({email:1}, {unique: true});
+        await dbCollection.insertOne(user);
         console.log('saved to database');
     }
     catch(err) {
-        res.send(500);
-        res.send("Error in creating user!");
+        throw err
     }
 }
 
@@ -40,14 +34,11 @@ const createUser = async (user) => {
  * @param {object} user query params for mongodb to search for user
  * @param {object} value to be updated into mongodb
  */
-const updateUser = async (user, value) => {
-    mongoClient.init();
+const updateUser = async (dbCollection, userQuery, value) => {
     try {
-        const collection = await mongoClient.connectToDB();
-        const user = collection.updateOne(user, {$set: value})
+        await dbCollection.updateOne(userQuery, {$set: value})
     } catch(err) {
-        res.send(500);
-        res.send("Error in updating user!");
+        throw err;
     }
 }
 
